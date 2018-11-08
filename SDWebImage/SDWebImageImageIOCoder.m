@@ -223,6 +223,37 @@ static const CGFloat kDestSeemOverlap = 2.0f;   // the numbers of pixels to over
         size_t width = CGImageGetWidth(imageRef);
         size_t height = CGImageGetHeight(imageRef);
         
+        /**********************************/
+        /*
+         这里在处理尺寸大于 20000 的大长图或者宽图的时候, 由于老机型内存不足会崩溃, 强制处理成 5000 的尺寸
+         2018.11.08 hyp
+         */
+        if (width == 0) {
+            width = image.size.width;
+        }
+        
+        if (height == 0) {
+            height = image.size.height;
+        }
+        
+        if (width == 0) {
+            width = 1;
+        }
+        
+        if (height == 0) {
+            height = 1;
+        }
+        
+        CGFloat max = 5000;
+        if (width > max) {
+            height = max / width * height;
+            width = max;
+        } else if (height > max) {
+            width = max * width / height;
+            height = max;
+        }
+        /**********************************/
+
         // kCGImageAlphaNone is not supported in CGBitmapContextCreate.
         // Since the original image here has no alpha info, use kCGImageAlphaNoneSkipLast
         // to create bitmap graphics contexts without alpha info.
